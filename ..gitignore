@@ -1,0 +1,5 @@
+# Ignore everything in the root
+/*
+# But keep the backend folder and its contents
+!/backend/
+!/backend/**
