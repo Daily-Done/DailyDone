@@ -18,7 +18,7 @@ public class Checker {
         return "checking pit";
     }
 
-    @GetMapping
+    @GetMapping("/dosomething")
     public String showtSomething(){
         return "checking git";
     }
