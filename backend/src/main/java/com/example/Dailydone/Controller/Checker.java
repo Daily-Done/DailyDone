@@ -5,17 +5,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/check")
+@RequestMapping("/checkination")
 public class Checker {
     @GetMapping
     public String ShowText() {
         return "checking of api";
-    }
-
-
-    @GetMapping
-    public String showSomething(){
-        return "checking pit";
     }
 
     @GetMapping("/dosomething")
