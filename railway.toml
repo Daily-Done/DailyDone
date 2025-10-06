@@ -1,5 +1,5 @@
 [build]
-builder = { type = "nixpacks", plan = { providers = ["java"] } }
+builder = "nixpacks"
 
 [deploy]
 preDeployCommand = "cd backend && mvn clean package -DskipTests"
