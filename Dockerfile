@@ -1,17 +1,17 @@
-# Use lightweight Java 17 image
+# ----------- Base Image -----------
 FROM openjdk:21-jdk-slim
 
-# Install Maven
+# ----------- Install Maven -----------
 RUN apt-get update && apt-get install -y maven
 
-# Set working directory
+# ----------- Set Working Directory -----------
 WORKDIR /app
 
-# Copy backend project into container
+# ----------- Copy Backend Code -----------
 COPY backend /app/backend
 
-# Build your Spring Boot JAR
+# ----------- Build Spring Boot JAR -----------
 RUN cd backend && mvn clean package -DskipTests
 
-# Run the generated JAR
-CMD ["java", "-jar", "/app/backend/target/*.jar"]
+# ----------- Run the Generated JAR -----------
+CMD ["sh", "-c", "java -jar $(find /app/backend/target -type f -name '*.jar' | head -n 1)"]
