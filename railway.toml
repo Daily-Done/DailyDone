@@ -1,0 +1,5 @@
+[build]
+builder = "none"
+
+[deploy]
+start = "cd backend && java -jar target/*.jar"
