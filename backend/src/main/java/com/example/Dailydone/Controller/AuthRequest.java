@@ -57,7 +57,13 @@ public class AuthRequest {
         pending.setOtp(otp);
         pending.setOtpExpiry(LocalDateTime.now().plusMinutes(5)); // 5 min expiry
         try {
-            pendingUserRepository.save(pending);
+            try {
+                pendingUserRepository.save(pending);
+                System.out.println("printed successfully no errors");
+            }catch (Exception e){
+                System.err.println("❌ Error while saving pending user: " + e.getMessage());
+                e.printStackTrace();
+            }
             System.out.println("EmailService instance = " + emailService);
             emailService.sendOtp(userDTO.getEmail(), otp);
 
