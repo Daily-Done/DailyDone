@@ -18,6 +18,9 @@ public class EmailService {
     private String brevoApiKey;
 
     public void sendOtp(String toEmail, String otp) {
+
+        System.out.println("🔥 sendOtp() CALLED with: " + toEmail);
+
         OkHttpClient client = new OkHttpClient();
 
         String json = """
