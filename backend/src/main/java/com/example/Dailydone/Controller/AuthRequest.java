@@ -40,6 +40,7 @@ public class AuthRequest {
 
     @PostMapping("/signup")
     public ResponseEntity<?> RegisterUser(@RequestBody UserDTO userDTO){
+        System.out.println("this signup method is called..");
         if(userAuthServices.verify(userDTO.getEmail()).isPresent()){
             return ResponseEntity.ok("Email already exist");
         }
