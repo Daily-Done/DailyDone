@@ -58,6 +58,7 @@ public class AuthRequest {
         pending.setOtpExpiry(LocalDateTime.now().plusMinutes(5)); // 5 min expiry
         try {
             pendingUserRepository.save(pending);
+            System.out.println("EmailService instance = " + emailService);
             emailService.sendOtp(userDTO.getEmail(), otp);
 
             return ResponseEntity.ok("Otp has been send");
