@@ -15,14 +15,18 @@ public class RoleService {
         this.roleRepository = roleRepository;
     }
 
+
     public void saveAllRoles(List<Role> roles) {
         for (Role role : roles) {
-            // Check if role already exists by ID or name
-            boolean exists = roleRepository.existsById(role.getId()) ||
-                    roleRepository.findByName(role.getName()).isPresent();
+
+            if (role.getName() == null || role.getName().trim().isEmpty()) continue;
+
+            boolean exists = roleRepository.findByName(role.getName().trim()).isPresent();
 
             if (!exists) {
-                roleRepository.save(role);
+                Role newRole = new Role();
+                newRole.setName(role.getName().trim());
+                roleRepository.save(newRole);
             }
         }
     }

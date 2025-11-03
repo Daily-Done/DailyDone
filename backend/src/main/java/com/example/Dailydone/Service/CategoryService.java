@@ -23,14 +23,18 @@ public class CategoryService {
 
     public String saveAllCategories(List<Category> categories) {
         for (Category category : categories) {
-            // Check if category already exists by ID or name
-            boolean exists = categoryRepo.existsById(category.getId()) ||
-                    categoryRepo.findByName(category.getName()).isPresent();
+            // check null or empty name
+            if (category.getName() == null || category.getName().trim().isEmpty()) continue;
+
+            // Check only by name — ID will be auto-generated
+            boolean exists = categoryRepo.findByName(category.getName().trim()).isPresent();
 
             if (!exists) {
-                categoryRepo.save(category);
+                Category newCategory = new Category();
+                newCategory.setName(category.getName().trim());
+                categoryRepo.save(newCategory);
             }
         }
-        return "successfully stored roles";
+        return "✅ Successfully stored categories";
     }
 }
