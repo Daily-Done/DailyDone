@@ -1,4 +1,5 @@
 D:\backend\backend\src\main\java\com\example\Dailydone\Configuration\CorsConfig.java
+D:\backend\backend\src\main\java\com\example\Dailydone\Configuration\FirebaseInitializer.java
 D:\backend\backend\src\main\java\com\example\Dailydone\Configuration\WebSocketConfig.java
 D:\backend\backend\src\main\java\com\example\Dailydone\Controller\AddressController.java
 D:\backend\backend\src\main\java\com\example\Dailydone\Controller\AuthRequest.java
@@ -6,6 +7,8 @@ D:\backend\backend\src\main\java\com\example\Dailydone\Controller\CategoryContro
 D:\backend\backend\src\main\java\com\example\Dailydone\Controller\Checker.java
 D:\backend\backend\src\main\java\com\example\Dailydone\Controller\ErrandController.java
 D:\backend\backend\src\main\java\com\example\Dailydone\Controller\ErrandWebSocketController.java
+D:\backend\backend\src\main\java\com\example\Dailydone\Controller\FirebaseAuthController.java
+D:\backend\backend\src\main\java\com\example\Dailydone\Controller\RoleController.java
 D:\backend\backend\src\main\java\com\example\Dailydone\Controller\UserProfileController.java
 D:\backend\backend\src\main\java\com\example\Dailydone\Controller\ValidationController.java
 D:\backend\backend\src\main\java\com\example\Dailydone\DailyDoneCommunityApplication.java
@@ -67,5 +70,7 @@ D:\backend\backend\src\main\java\com\example\Dailydone\Service\CategoryService.j
 D:\backend\backend\src\main\java\com\example\Dailydone\Service\EmailService.java
 D:\backend\backend\src\main\java\com\example\Dailydone\Service\ErrandService.java
 D:\backend\backend\src\main\java\com\example\Dailydone\Service\GeoLatLong.java
+D:\backend\backend\src\main\java\com\example\Dailydone\Service\RoleService.java
+D:\backend\backend\src\main\java\com\example\Dailydone\Service\SmsAPI.java
 D:\backend\backend\src\main\java\com\example\Dailydone\Service\UserAuthServices.java
 D:\backend\backend\src\main\java\com\example\Dailydone\Service\UserprofileService.java
