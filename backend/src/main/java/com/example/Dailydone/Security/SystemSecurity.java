@@ -80,6 +80,8 @@ public class SystemSecurity {
                         .permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/","/error").permitAll()
+                        .requestMatchers("/Categories/**","/api/roles/**")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->
