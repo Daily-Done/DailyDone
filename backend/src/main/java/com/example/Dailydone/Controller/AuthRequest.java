@@ -86,11 +86,13 @@ public class AuthRequest {
         PendingUser pendingUser = pendingUserRepository
                 .findByEmail(email)
                 .orElseThrow(()-> new RuntimeException("Email has not been entered"));
+
         pendingUser.setOtp(OTP);
         pendingUser.setOtpExpiry(LocalDateTime.now().plusMinutes(1));
         pendingUserRepository.save(pendingUser);
         emailService.sendOtp(pendingUser.getEmail(), pendingUser.getOtp());
         return ResponseEntity.ok("OTP is sent again");
+
     }
 
     @PostMapping("/verification")
