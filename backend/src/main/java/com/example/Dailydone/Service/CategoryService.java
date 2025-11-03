@@ -16,16 +16,21 @@ import java.util.Optional;
 public class CategoryService {
     @Autowired
     private CategoryRepo categoryRepo;
-    @Cacheable("categories")
+
     public List<Category> getCategories(){
         return categoryRepo.findAll();
     }
-    @CacheEvict(value = "categories", allEntries = true)
-    public Category addCategories(Category category){
-        Optional<Category> category1 = categoryRepo.findByName(category.getName());
-        if(category1.isPresent()){
-            throw new RuntimeException("Category already present");
+
+    public String saveAllCategories(List<Category> categories) {
+        for (Category category : categories) {
+            // Check if category already exists by ID or name
+            boolean exists = categoryRepo.existsById(category.getId()) ||
+                    categoryRepo.findByName(category.getName()).isPresent();
+
+            if (!exists) {
+                categoryRepo.save(category);
+            }
         }
-        return categoryRepo.save(category);
+        return "successfully stored roles";
     }
 }

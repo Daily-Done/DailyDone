@@ -88,7 +88,7 @@ public class ErrandService {
 
     @Transactional
     public ErrandResponseDTO AcceptingTask(Long id, User user){
-        System.out.println("💦💦💦💦💦💦💦 accepting task has been called");
+        System.out.println("🚝🚝🚝 accepting task has been called");
 
         UserProfile userProfile1 = userProfileRepo.findByUser_Id(user.getId())
                 .orElseThrow(()->new RuntimeException("not found"));

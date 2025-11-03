@@ -1,4 +1,5 @@
 package com.example.Dailydone.Entity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/Categories")
 public class CategoryController {
@@ -18,8 +20,8 @@ public class CategoryController {
                 .body(categoryService.getCategories());
    }
     @PostMapping("/add")
-    public ResponseEntity<?> addCategory(@RequestBody Category category){
+    public ResponseEntity<?> addCategory(@RequestBody List<Category> category){
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(categoryService.addCategories(category));
+                .body(categoryService.saveAllCategories(category));
     }
 }
