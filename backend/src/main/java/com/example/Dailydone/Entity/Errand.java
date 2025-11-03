@@ -43,6 +43,8 @@ public class Errand {
     @JoinColumn(name = "runner_id")
     private User runner;
 
+    private String Urgency;
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;

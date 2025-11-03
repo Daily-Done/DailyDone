@@ -26,12 +26,13 @@ public class UserprofileService {
     private UserProfileMapper userProfileMapper;
     @Autowired
     private TempOTPRepo tempOTPRepo;
-
+    @Autowired
+    private SmsAPI smsAPI;
     public static int calculateAge(LocalDate birthDate) {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
-
-    public UserProfileDTO CreateProfile(UserProfileDTO userProfileDTO){
+    @Transactional
+    public String CreateProfile(UserProfileDTO userProfileDTO){
         Optional<UserProfile> userProfile = userProfileRepo
                 .findByPhone(userProfileDTO.getPhone());
         if(userProfile.isPresent()){
@@ -39,7 +40,7 @@ public class UserprofileService {
         }
         UserProfile userProfile1 = userProfileMapper.toEntity(userProfileDTO);
         String DateString = userProfile1.getAge();
-        String[] parts = DateString.split("/");
+        String[] parts = DateString.split("-");
 
         int day = Integer.parseInt(parts[0]);
         int month = Integer.parseInt(parts[1]);
@@ -50,28 +51,31 @@ public class UserprofileService {
         String a = String.valueOf(age);
 
         userProfile1.setAge(a);
-        userProfileRepo.save(userProfile1);
-        return userProfileMapper.toDTO(userProfile1);
+        userProfile1 = userProfileRepo.save(userProfile1);
+
+        return "Success";
     }
 
-    @CacheEvict(value = "userprofile",key = "#id")
     public UserProfileDTO UpdateProfile(Long id,UserProfileDTO userProfileDTO){
         UserProfile userProfile = userProfileRepo.findByUser_Id(id)
                 .orElseThrow(()->new RuntimeException("User not found"));
-
-        userProfile.setProfileImage(userProfileDTO.getProfileImage());
-        userProfile.setName(userProfileDTO.getName());
+    userProfile.setName(userProfileDTO.getName());
         userProfile.setPhone(userProfileDTO.getPhone());
         userProfile = userProfileRepo.save(userProfile);
         return userProfileMapper.toDTO(userProfile);
     }
 
-    @Cacheable("userprofile")
     public UserProfileDTO GetProfile(Long id){
-        return userProfileMapper.toDTO(userProfileRepo.findByUser_Id(id)
+        UserProfileDTO userProfileDTO = userProfileMapper.toDTO(userProfileRepo.findByUser_Id(id)
                 .orElseThrow(()->new RuntimeException("User id not found")));
+        System.out.println(userProfileDTO.getTaskPosted());
+        if(userProfileDTO.getTaskPosted() < 0){
+            userProfileDTO.setTaskPosted(0);
+        }
+        System.out.println(userProfileDTO.getTaskPosted());
+        return userProfileDTO;
     }
-
+    @Transactional
     public String sendOTP(String phone){
         TempOtp tempOtp = new TempOtp();
         String OTP = OtpGeneRater.generateOtp4();
@@ -82,6 +86,9 @@ public class UserprofileService {
         tempOtp.setExpiry(LocalDateTime.now().plusMinutes(3));
         tempOtp.setPhone(phone);
         tempOtp = tempOTPRepo.save(tempOtp);
+
+        smsAPI.sendOtpSms(tempOtp.getPhone(), tempOtp.getOTP());
+
         return "saved";
     }
     @Transactional

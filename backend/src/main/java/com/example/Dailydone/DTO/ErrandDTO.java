@@ -16,6 +16,7 @@ public class ErrandDTO {
     private String description;
     private Double price;
     private String status;
+    private String Urgency;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private UserDTO customerId;

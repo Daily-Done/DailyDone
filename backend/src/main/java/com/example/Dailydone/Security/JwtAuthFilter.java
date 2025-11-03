@@ -29,6 +29,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        System.out.println("🔥 JWT filter hit: " + request.getMethod() + " " + request.getRequestURI());
 
         final Logger logger = LoggerFactory.getLogger(JwtAuthFilter.class);
 
@@ -66,5 +67,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+        System.out.println("pass jwt to further request");
     }
 }

@@ -10,47 +10,104 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import okhttp3.RequestBody;
+import sendinblue.ApiClient;
+import sendinblue.Configuration;
+import sendinblue.auth.ApiKeyAuth;
+import sibApi.TransactionalEmailsApi;
+import sibModel.SendSmtpEmail;
+import sibModel.SendSmtpEmailSender;
+import sibModel.SendSmtpEmailTo;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class EmailService {
 
-    @Value("${BREVO_API_KEY}")
-    private String brevoApiKey;
+    @Value("${brevo.api.key}")
+    private String apiKeyValue;
+
+    @Value("${brevo.sender.email}")
+    private String senderEmail;
+
+    @Value("${brevo.sender.name}")
+    private String senderName;
+
+    public void sendExpiryMessage(String toEmail){
+        try {
+            // Initialize Brevo API client
+            ApiClient defaultClient = Configuration.getDefaultApiClient();
+            ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key");
+            apiKey.setApiKey(apiKeyValue); // <-- from your @Value property
+
+            TransactionalEmailsApi apiInstance = new TransactionalEmailsApi();
+
+            // Sender info (your verified domain email)
+
+            SendSmtpEmailSender sender = new SendSmtpEmailSender();
+            sender.setEmail(senderEmail); // e.g. team@dailydone.in
+            sender.setName(senderName);   // e.g. Dailydone
+
+            // Recipient
+            SendSmtpEmailTo to = new SendSmtpEmailTo();
+            to.setEmail(toEmail);
+
+            // Build email
+            SendSmtpEmail email = new SendSmtpEmail();
+            email.setSender(sender);
+            email.setTo(List.of(to));
+            email.setSubject("Task Expiry Message");
+            email.setTextContent("No helper has accepted Your Task in last " +
+                    "24 hours so we are expiring your task");
+
+            // Send via Brevo API
+            apiInstance.sendTransacEmail(email);
+
+            System.out.println("🐗🐗 Message Send Successfully " + toEmail);
+
+        } catch (Exception e) {
+            System.err.println("❌ Failed to send Message " + e.getMessage());
+            e.printStackTrace();
+        }
+        System.out.println("👻👻 Message sent successfully to " + toEmail);
+    }
 
     public void sendOtp(String toEmail, String otp) {
 
-        System.out.println("🔥 sendOtp() CALLED with: " + toEmail);
 
-        OkHttpClient client = new OkHttpClient();
+        try {
+            // Initialize Brevo API client
+            ApiClient defaultClient = Configuration.getDefaultApiClient();
+            ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key");
+            apiKey.setApiKey(apiKeyValue); // <-- from your @Value property
 
-        String json = """
-        {
-          "sender": {"name": "DailyDone", "email": "dailydonehelp@gmail.com"},
-          "to": [{"email": "%s"}],
-          "subject": "Your DailyDone OTP",
-          "htmlContent": "<p>Your OTP is <b>%s</b></p>"
-        }
-        """.formatted(toEmail, otp);
+            TransactionalEmailsApi apiInstance = new TransactionalEmailsApi();
 
-        RequestBody body = RequestBody.create(
-                json,
-                MediaType.parse("application/json")
-        );
-        Request request = new Request.Builder()
-                .url("https://api.brevo.com/v3/smtp/email")
-                .post(body)
-                .addHeader("accept", "application/json")
-                .addHeader("api-key", brevoApiKey)
-                .addHeader("content-type", "application/json")
-                .build();
+            // Sender info (your verified domain email)
+            SendSmtpEmailSender sender = new SendSmtpEmailSender();
+            sender.setEmail(senderEmail); // e.g. team@dailydone.in
+            sender.setName(senderName);   // e.g. Dailydone
 
-        try (Response response = client.newCall(request).execute()) {
-            System.out.println("Brevo response code: " + response.code());
-            if (!response.isSuccessful()) {
-                System.err.println("Brevo failed: " + response.body().string());
-            }
-        } catch (Exception e) {
+            // Recipient
+            SendSmtpEmailTo to = new SendSmtpEmailTo();
+            to.setEmail(toEmail);
+
+            // Build email
+            SendSmtpEmail email = new SendSmtpEmail();
+            email.setSender(sender);
+            email.setTo(List.of(to));
+            email.setSubject("Your DailyDone OTP");
+            email.setTextContent("Your OTP is: " + otp);
+
+            // Send via Brevo API
+            apiInstance.sendTransacEmail(email);
+
+            System.out.println("✅ OTP Email sent successfully to " + toEmail);
+
+         } catch (Exception e) {
+            System.err.println("❌ Failed to send OTP email: " + e.getMessage());
             e.printStackTrace();
         }
+        System.out.println("✅ OTP Email sent successfully to " + toEmail);
     }
 }

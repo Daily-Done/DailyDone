@@ -10,7 +10,6 @@ public class UserProfileDTO {
     private Long id;
     private String name;
     private String phone;
-    private byte[] profileImage;
     private UserDTO userid;
     private String age;
     private double earning;

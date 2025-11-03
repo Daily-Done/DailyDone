@@ -16,6 +16,7 @@ public class Address {
     private Long id;
 
     private String address;
+    private String location;
     private Double latitude;
     private Double longitude;
 

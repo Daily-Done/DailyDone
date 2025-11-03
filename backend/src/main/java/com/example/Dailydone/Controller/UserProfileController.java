@@ -8,6 +8,7 @@ import com.example.Dailydone.Security.UserPrinciple;
 import com.example.Dailydone.Service.UserprofileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +25,13 @@ public class UserProfileController {
     public ResponseEntity<?> CreateProfile(@RequestParam String name,
                                            @RequestParam String dob,
                                            @RequestParam String phone,
-                                           @RequestParam String address,
-                                           @RequestParam("image") MultipartFile image) throws IOException {
+                                           @RequestParam String address) throws IOException {
+
+        System.out.println("Create Profile Has been called");
+
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         UserProfileDTO userProfileDTO = new UserProfileDTO();
-        userProfileDTO.setProfileImage(image.getBytes());
         userProfileDTO.setName(name);
         userProfileDTO.setAge(dob);
         userProfileDTO.setPhone(phone);
@@ -46,22 +48,26 @@ public class UserProfileController {
                 .body(userprofileService.UpdateProfile(id, userProfileDTO));
     }
 
-    @GetMapping("/profile{id}")
-    public ResponseEntity<?> GetProfile(@PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.FOUND)
+    @GetMapping("/getProfile")
+    public ResponseEntity<?> GetProfile(){
+        UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
+        System.out.println("Get Profile Has been called");
+
+        Long id = userPrinciple.GetUser().getId();
+        return ResponseEntity.status(HttpStatus.OK)
                 .body(userprofileService.GetProfile(id));
     }
 
     @PostMapping("/sendSms")
     public ResponseEntity<?> SendPhone(@RequestParam String phone) {
-        return ResponseEntity.status(HttpStatus.CONTINUE)
-                .body(userprofileService.sendOTP(phone));
+        return ResponseEntity.ok(userprofileService.sendOTP(phone));
     }
 
     @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/verifySms")
     public ResponseEntity<?> SendOtp(@RequestParam String phone,@RequestBody TempOtp otp){
-        return ResponseEntity.status(HttpStatus.CONTINUE)
-                .body(userprofileService.Verify(otp,phone));
+        return ResponseEntity.ok(userprofileService.Verify(otp,phone));
     }
 }

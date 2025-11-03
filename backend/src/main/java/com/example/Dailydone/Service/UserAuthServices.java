@@ -4,9 +4,11 @@ import com.example.Dailydone.DTO.UserDTO;
 import com.example.Dailydone.Entity.Role;
 import com.example.Dailydone.Entity.User;
 import com.example.Dailydone.Mapper.UserMapper;
+import com.example.Dailydone.Repository.PendingUserRepository;
 import com.example.Dailydone.Repository.RoleRepo;
 import com.example.Dailydone.Repository.UserRepository;
 import com.example.Dailydone.Security.UserPrinciple;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,6 +26,8 @@ public class UserAuthServices implements UserDetailsService {
     private RoleRepo roleRepo;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PendingUserRepository pendingUserRepository;
     public User Register(UserDTO userDTO) {
      Optional<User> user = userRepository.findByUsername(userDTO.getUsername());
      if(user.isPresent()){
@@ -42,7 +46,11 @@ public class UserAuthServices implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Email is not registered"));
+                .orElseThrow(() -> new RuntimeException("Email is not regidstere"));
         return new UserPrinciple(user);
+    }
+    @Transactional
+    public void tokenDeletion(String email){
+        pendingUserRepository.deleteByEmail(email);
     }
 }

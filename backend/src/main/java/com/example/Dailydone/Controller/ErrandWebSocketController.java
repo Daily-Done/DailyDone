@@ -14,6 +14,7 @@ public class ErrandWebSocketController {
     private final SimpMessagingTemplate template;
 
     public ErrandWebSocketController(SimpMessagingTemplate template) {
+
         this.template = template;
     }
 

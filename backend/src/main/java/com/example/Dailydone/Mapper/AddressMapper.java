@@ -18,6 +18,7 @@ public class AddressMapper {
         AddressDTO dto = new AddressDTO();
         dto.setId(address.getId());
         dto.setAddress(address.getAddress());
+        dto.setLocation(address.getLocation());
         dto.setLatitude(address.getLatitude());
         dto.setLongitude(address.getLongitude());
         if (address.getUser() != null) {
@@ -33,6 +34,7 @@ public class AddressMapper {
         }
         Address address = new Address();
         address.setAddress(dto.getAddress());
+        address.setLocation(dto.getLocation());
         address.setLatitude(dto.getLatitude());
         address.setLongitude(dto.getLongitude());
         if(dto.getUserId() != null){

@@ -42,21 +42,24 @@ public class AuthRequest {
     public ResponseEntity<?> RegisterUser(@RequestBody UserDTO userDTO){
         System.out.println("this signup method is called..");
         if(userAuthServices.verify(userDTO.getEmail()).isPresent()){
+            System.out.println("email already exist");
             return ResponseEntity.ok("Email already exist");
         }
         Optional<PendingUser> pendingUser = pendingUserRepository
                 .findByEmail(userDTO.getEmail());
         if(pendingUser.isPresent()){
+            System.out.println("email already pending");
             return ResponseEntity.ok("email already pending");
         }
+        System.out.println("email is perfect");
         String otp = OtpGeneRater.Generate();
         PendingUser pending = new PendingUser();
         pending.setUsername(userDTO.getUsername());
         pending.setEmail(userDTO.getEmail());
         pending.setPassword(userDTO.getPassword());
         pending.setOtp(otp);
-        pending.setOtpExpiry(LocalDateTime.now().plusMinutes(5)); // 5 min expiry
-        try {
+        pending.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+        System.out.println("saved in pending user");// 5 min expiry
             try {
                 pendingUserRepository.save(pending);
                 System.out.println("printed successfully no errors");
@@ -64,6 +67,8 @@ public class AuthRequest {
                 System.err.println("❌ Error while saving pending user: " + e.getMessage());
                 e.printStackTrace();
             }
+           System.out.println("got out of that repo");
+            try{
             System.out.println("EmailService instance = " + emailService);
             emailService.sendOtp(userDTO.getEmail(), otp);
 
@@ -89,7 +94,6 @@ public class AuthRequest {
     }
 
     @PostMapping("/verification")
-    @Transactional
     public ResponseEntity<?> Verification(@RequestBody OTP otp,@RequestParam String email){
         PendingUser pendingUser = pendingUserRepository.findByEmail(email)
                 .orElseThrow(()-> new RuntimeException("Email not entered yet"));
@@ -105,7 +109,7 @@ public class AuthRequest {
         userDTO.setEmail(pendingUser.getEmail());
         userDTO.setPassword(pendingUser.getPassword());
 
-        pendingUserRepository.deleteByEmail(email);
+        userAuthServices.tokenDeletion(pendingUser.getEmail());
 
         User user = userAuthServices.Register(userDTO);
         UserPrinciple principle = new UserPrinciple(user);

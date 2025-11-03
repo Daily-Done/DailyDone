@@ -23,8 +23,7 @@ public class UserProfileMapper {
         dto.setName(profile.getName());
         dto.setPhone(profile.getPhone());
 
-        dto.setProfileImage(profile.getProfileImage());
-        User user = userRepository.findById(profile.getId())
+        User user = userRepository.findById(profile.getUser().getId())
                 .orElseThrow(()->new RuntimeException("User Not found"));
 
         dto.setUserid(UserMapper.toDTO(user));
@@ -34,6 +33,8 @@ public class UserProfileMapper {
         dto.setEarning(profile.getEarning());
         dto.setCreatedAT(profile.getCreatedAt());
         dto.setLocalAddress(profile.getLocalAddress());
+        dto.setTaskPosted(profile.getTaskPosted());
+        dto.setTaskAccepted(profile.getTaskAccepted());
         return dto;
     }
 
@@ -43,7 +44,6 @@ public class UserProfileMapper {
         UserProfile profile = new UserProfile();
         profile.setName(dto.getName());
         profile.setPhone(dto.getPhone());
-        profile.setProfileImage(dto.getProfileImage());
         Role role = roleRepo.findByName("ROLE_USER")
                 .orElseThrow(() -> new RuntimeException("role not there"));
         profile.setUser(UserMapper.toEntity(dto.getUserid(), role));
