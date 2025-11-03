@@ -223,14 +223,21 @@ public class ErrandService {
         if (optionalErrands.isPresent()) {
             List<Errand> errands = optionalErrands.get();
             errands.forEach(e -> e.setStatus("Expired"));
-            for(Errand errand : errands){
-               User user = userRepository.findById(errand.getCustomer().getId())
-                       .orElseThrow(()-> new RuntimeException("not found"));
-               emailService.sendExpiryMessage(user.getEmail());
+
+            for (Errand errand : errands) {
+                User user = errand.getCustomer();
+                if (user != null && user.getEmail() != null) {
+                    try {
+                        emailService.sendExpiryMessage(user.getEmail());
+                        System.out.println("📧 Sent expiry email to: " + user.getEmail());
+                        Thread.sleep(3000);
+                    } catch (Exception e) {
+                        System.err.println("❌ Failed to send email to " + user.getEmail() + ": " + e.getMessage());
+                    }
+                }
             }
 
             errandRepo.saveAll(errands);
-
             System.out.println("✅ Auto-expired errands: " + errands.size());
         } else {
             System.out.println("ℹ️ No errands found to expire at this time.");

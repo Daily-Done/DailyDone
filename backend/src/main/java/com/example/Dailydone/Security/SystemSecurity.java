@@ -96,7 +96,6 @@ public class SystemSecurity {
         config.setAllowedOriginPatterns(List.of(
                 "http://localhost:5173",
                 "http://localhost:5174",
-                "http://localhost:5175",
                 "https://misty-painedly-cleotilde.ngrok-free.dev",
                 "dailydone.in",
                 "www.dailydone.in",
