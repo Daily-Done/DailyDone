@@ -19,6 +19,7 @@ public class Rating {
 
     private Integer rating;  // 1 to 5
     private String comment;
+    private Integer points;
     private LocalDateTime createdAt;
 
     @ManyToOne

@@ -150,6 +150,7 @@ public class ErrandController {
 
     @PostMapping("/review")
     public ResponseEntity<?> Review(@RequestBody RatingDTO ratingDTO){
+
        return ResponseEntity.ok("yashraj");
     }
 

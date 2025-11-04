@@ -158,7 +158,6 @@ public class ErrandService {
                 .orElseThrow(()->new RuntimeException("not found"));
 
         errand.setStatus("Completed");
-        userProfile.setTaskPosted(userProfile.getTaskPosted() + 1);
         helperProfile.setTaskAccepted(helperProfile.getTaskAccepted()+1);
         helperProfile.setEarning(helperProfile.getEarning() + errand.getPrice());
 

@@ -38,6 +38,7 @@ public class UserProfile {
     private int taskAccepted;
     @Column(name = "taskPosted")
     private int taskPosted;
+
     @PrePersist
     public void onCreate(){
         this.createdAt = LocalDateTime.now();
