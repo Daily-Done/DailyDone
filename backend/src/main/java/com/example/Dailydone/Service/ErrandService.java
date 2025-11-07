@@ -235,28 +235,15 @@ public class ErrandService {
     }
 
     public UserProfileDTO getHelperProfile(Long id){
-        UserProfileDTO userProfileDTO = userProfileMapper.toDTO(userProfileRepo.findById(id)
-                .orElseThrow(()->new RuntimeException("User id not found")));
 
-        UserProfile userProfile =userProfileRepo.findById(id)
+        UserProfile userProfile = userProfileRepo.findById(id)
                 .orElseThrow(()->new RuntimeException("User id not found"));
 
-        List<Rating> ratings = ratingRepo.findByUserProfile(userProfile);
-        int n = ratings.size();
-        double sums = 0;
+        System.out.println("got userProfile Rating "
+                + userProfile.getRating() + " : "
+                + userProfile.getRatingUser());
 
-        for(Rating rating : ratings){
-            sums += rating.getRating();
-        }
-
-        double avg = sums/n;
-        userProfileDTO.setRating(avg);
-        System.out.println(userProfileDTO.getTaskPosted());
-        if(userProfileDTO.getTaskPosted() < 0){
-            userProfileDTO.setTaskPosted(0);
-        }
-        System.out.println(userProfileDTO.getTaskPosted());
-        return userProfileDTO;
+        return userProfileMapper.toDTO(userProfile);
     }
 
 }

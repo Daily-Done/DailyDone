@@ -86,13 +86,15 @@ public class UserProfileController {
 
     @GetMapping("/MoneyStats")
     public ResponseEntity<EarningStatsDTO> getEarnings() {
-
+        System.out.println("MoneyStats Apis has been called .....");
+        System.out.println("🦺🦺🦺🧿🧿🧿");
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
 
         Long userId = userPrinciple.GetUser().getId();
 
         EarningStatsDTO stats = userprofileService.getMoneyStats(userId);
+        System.out.println(stats.toString());
         return ResponseEntity.ok(stats);
     }
 }
