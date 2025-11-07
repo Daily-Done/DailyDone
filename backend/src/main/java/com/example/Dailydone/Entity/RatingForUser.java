@@ -2,17 +2,16 @@ package com.example.Dailydone.Entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
 @Entity
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Rating {
+public class RatingForUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,15 +26,10 @@ public class Rating {
     private Errand errand;
 
     @ManyToOne
-    @JoinColumn(name = "rater_id")
-    private User rater;
-
-    @ManyToOne
     @JoinColumn(name = "ratedTo_id")
     private User ratee;
 
     @ManyToOne
     @JoinColumn(name = "user_profile_id")
-    private UserProfile userProfile;
-
+    private UserProfile userProfile1;
 }

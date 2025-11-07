@@ -1,11 +1,14 @@
 package com.example.Dailydone.Entity;
 
+import com.example.Dailydone.DTO.RatingDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -18,7 +21,8 @@ public class UserProfile {
     @Column(name = "name")
     private String name;             // Display name
     private String phone;
-
+    private Double rating;
+    private Double UserRating;
     @Column(name = "age")
     private String age;
 
@@ -38,6 +42,16 @@ public class UserProfile {
     private int taskAccepted;
     @Column(name = "taskPosted")
     private int taskPosted;
+
+    @OneToOne
+    @JoinColumn(name = "earningRecord_id")
+    private EarningRecord earningRecord;
+
+    @OneToMany(mappedBy = "userProfile")
+    private List<Rating> ratings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userProfile1")
+    private List<RatingForUser> ratingUser = new ArrayList<>();
 
     @PrePersist
     public void onCreate(){

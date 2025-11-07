@@ -65,7 +65,7 @@ public class ErrandMapper {
         if(errand.getHelperProfile() != null && errand.getHelperProfile().getId() != null) {
             UserProfile runnerProfile = userProfileRepo.findById(errand.getHelperProfile().getId())
                     .orElseThrow(() -> new RuntimeException("profile not found"));
-            dto.setUserProfileId(userProfileMapper.toDTO(runnerProfile));
+            dto.setHelperProfileId(userProfileMapper.toDTO(runnerProfile));
         }
         return dto;
     }

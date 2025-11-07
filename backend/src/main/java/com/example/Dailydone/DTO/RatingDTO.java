@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class RatingDTO {
     private Long id;
-    private Integer rating;
+    private Double rating;
     private String comment;
     private LocalDateTime createdAt;
     private Long errandId;

@@ -2,14 +2,15 @@ package com.example.Dailydone.Service;
 
 import com.example.Dailydone.Controller.ErrandWebSocketController;
 import com.example.Dailydone.DTO.ErrandDTO;
-import com.example.Dailydone.DTO.ErrandResponseDTO;
 import com.example.Dailydone.DTO.UserProfileDTO;
 import com.example.Dailydone.Entity.Errand;
+import com.example.Dailydone.Entity.Rating;
 import com.example.Dailydone.Entity.User;
 import com.example.Dailydone.Entity.UserProfile;
 import com.example.Dailydone.Mapper.ErrandMapper;
 import com.example.Dailydone.Mapper.UserProfileMapper;
 import com.example.Dailydone.Repository.ErrandRepo;
+import com.example.Dailydone.Repository.RatingRepo;
 import com.example.Dailydone.Repository.UserProfileRepo;
 import com.example.Dailydone.Repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -18,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.authorization.method.AuthorizeReturnObject;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -27,6 +27,8 @@ import java.util.Optional;
 
 @Service
 public class ErrandService {
+    @Autowired
+    private RatingRepo ratingRepo;
     @Autowired
     private EmailService emailService;
     @Autowired
@@ -87,45 +89,34 @@ public class ErrandService {
     }
 
     @Transactional
-    public ErrandResponseDTO AcceptingTask(Long id, User user){
-        System.out.println("🚝🚝🚝 accepting task has been called");
+    public ErrandDTO AcceptingTask(Long id, User user) {
+        System.out.println("🚝 accepting task has been called");
 
-        UserProfile userProfile1 = userProfileRepo.findByUser_Id(user.getId())
-                .orElseThrow(()->new RuntimeException("not found"));
+        UserProfile helperProfile = userProfileRepo.findByUser_Id(user.getId())
+                .orElseThrow(() -> new RuntimeException("Helper profile not found"));
 
         Errand errand = errandRepo.findById(id)
-                .orElseThrow(()->new RuntimeException("Errand Not found"));
+                .orElseThrow(() -> new RuntimeException("Errand not found"));
+
         errand.setStatus("Accepted");
-
         errand.setRunner(user);
+        errand.setHelperProfile(helperProfile);
 
-        errand.setHelperProfile(userProfile1);
+        System.out.println("✨ helper id: " + user.getId());
 
-        System.out.println("✨✨✨ helper id: " + user.getId());
-
-        UserProfile userProfile = userProfileRepo.findByUser_Id(user.getId())
-                .orElseThrow(()->new RuntimeException("userprofile not found"));
-
+        errandRepo.saveAndFlush(errand);
+        System.out.println("🩻🩻🩻🩻🩻🩻🩻🩻");
+        errand = errandRepo.findById(errand.getId())
+                .orElseThrow(() -> new RuntimeException("Failed to reload updated errand"));
+        System.out.println("🧊🧊🧊🧊🧊🧊🧊🧊🧊🧊🧊🧊");
         ErrandDTO errandDTO = errandMapper.toDTO(errand);
-
-        UserProfileDTO userProfileDTO = userProfileMapper.toDTO(userProfile);
-
-        errandRepo.save(errand);
-
-        ErrandResponseDTO errandResponseDTO = new ErrandResponseDTO();
-
-        errandResponseDTO.setErrandDTO(errandDTO);
-        errandResponseDTO.setUserProfileDTO(userProfileDTO);
-
-        //User user1 = userRepository.findById(id)
-          //      .orElseThrow(()->new RuntimeException("User not found"));
-
-        //webSocketController.notifyErrandAccepted(user1.getUsername()
-          //      ,userProfileDTO.getName(),
-            //    errandDTO.getDescription());
-
-        return errandResponseDTO;
+        System.out.println("🧬🧬🧬🧬");
+        System.out.println(errandDTO.getHelperProfileId().toString());
+        System.out.println(" Task accepted successfully for helper: " + helperProfile.getId());
+        return errandDTO;
     }
+
+
     @Transactional
     public ErrandDTO CancelTask(Long id,User user){
         System.out.println("this cancel helper is called ⚗️⚗️⚗️🛢️🛢️🩻🩻💉💉🩺🩺🧬🧬🔬🔬");
@@ -241,6 +232,31 @@ public class ErrandService {
         } else {
             System.out.println("ℹ️ No errands found to expire at this time.");
         }
+    }
+
+    public UserProfileDTO getHelperProfile(Long id){
+        UserProfileDTO userProfileDTO = userProfileMapper.toDTO(userProfileRepo.findById(id)
+                .orElseThrow(()->new RuntimeException("User id not found")));
+
+        UserProfile userProfile =userProfileRepo.findById(id)
+                .orElseThrow(()->new RuntimeException("User id not found"));
+
+        List<Rating> ratings = ratingRepo.findByUserProfile(userProfile);
+        int n = ratings.size();
+        double sums = 0;
+
+        for(Rating rating : ratings){
+            sums += rating.getRating();
+        }
+
+        double avg = sums/n;
+        userProfileDTO.setRating(avg);
+        System.out.println(userProfileDTO.getTaskPosted());
+        if(userProfileDTO.getTaskPosted() < 0){
+            userProfileDTO.setTaskPosted(0);
+        }
+        System.out.println(userProfileDTO.getTaskPosted());
+        return userProfileDTO;
     }
 
 }

@@ -10,6 +10,7 @@ import com.example.Dailydone.Mapper.UserMapper;
 import com.example.Dailydone.Repository.UserProfileRepo;
 import com.example.Dailydone.Security.UserPrinciple;
 import com.example.Dailydone.Service.ErrandService;
+import com.example.Dailydone.Service.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/errand")
 public class ErrandController {
+    @Autowired
+    private RatingService ratingService;
     @Autowired
     private ErrandService errandService;
     @Autowired
@@ -146,12 +149,6 @@ public class ErrandController {
         Long id1 = userPrinciple.GetUser().getId();
 
         return ResponseEntity.ok(errandService);
-    }
-
-    @PostMapping("/review")
-    public ResponseEntity<?> Review(@RequestBody RatingDTO ratingDTO){
-
-       return ResponseEntity.ok("yashraj");
     }
 
 }

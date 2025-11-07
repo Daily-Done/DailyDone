@@ -1,10 +1,12 @@
 package com.example.Dailydone.Controller;
 
+import com.example.Dailydone.DTO.EarningStatsDTO;
 import com.example.Dailydone.DTO.UserProfileDTO;
 import com.example.Dailydone.Entity.TempOtp;
 import com.example.Dailydone.Entity.UserProfile;
 import com.example.Dailydone.Mapper.UserMapper;
 import com.example.Dailydone.Security.UserPrinciple;
+import com.example.Dailydone.Service.ErrandService;
 import com.example.Dailydone.Service.UserprofileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,8 @@ import java.io.IOException;
 public class UserProfileController {
     @Autowired
     private UserprofileService userprofileService;
+    @Autowired
+    private ErrandService errandService;
     @PostMapping("/create")
     public ResponseEntity<?> CreateProfile(@RequestParam String name,
                                            @RequestParam String dob,
@@ -69,5 +73,26 @@ public class UserProfileController {
     @PostMapping("/verifySms")
     public ResponseEntity<?> SendOtp(@RequestParam String phone,@RequestBody TempOtp otp){
         return ResponseEntity.ok(userprofileService.Verify(otp,phone));
+    }
+
+    @GetMapping("/getHelperProfile")
+    public ResponseEntity<?> GetHelperProfile(@RequestParam Long id){
+
+        System.out.println("Get Profile Has been called");
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(errandService.getHelperProfile(id));
+    }
+
+    @GetMapping("/MoneyStats")
+    public ResponseEntity<EarningStatsDTO> getEarnings() {
+
+        UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+
+        Long userId = userPrinciple.GetUser().getId();
+
+        EarningStatsDTO stats = userprofileService.getMoneyStats(userId);
+        return ResponseEntity.ok(stats);
     }
 }

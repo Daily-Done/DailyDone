@@ -10,6 +10,8 @@ public class UserProfileDTO {
     private Long id;
     private String name;
     private String phone;
+    private Double rating;
+    private Double UserBehaviour;
     private UserDTO userid;
     private String age;
     private double earning;

@@ -35,6 +35,8 @@ public class UserProfileMapper {
         dto.setLocalAddress(profile.getLocalAddress());
         dto.setTaskPosted(profile.getTaskPosted());
         dto.setTaskAccepted(profile.getTaskAccepted());
+        dto.setUserBehaviour(profile.getUserRating());
+        dto.setRating(profile.getRating());
         return dto;
     }
 
@@ -49,6 +51,8 @@ public class UserProfileMapper {
         profile.setUser(UserMapper.toEntity(dto.getUserid(), role));
         profile.setAge(dto.getAge());
         profile.setLocalAddress(dto.getLocalAddress());
+        profile.setUserRating(dto.getUserBehaviour());
+        profile.setRating(dto.getRating());
         return profile;
     }
 }

@@ -1,21 +1,19 @@
 package com.example.Dailydone.Service;
 
+import com.example.Dailydone.DTO.EarningStatsDTO;
 import com.example.Dailydone.DTO.UserProfileDTO;
-import com.example.Dailydone.Entity.TempOtp;
-import com.example.Dailydone.Entity.UserProfile;
+import com.example.Dailydone.Entity.*;
 import com.example.Dailydone.External.OtpGeneRater;
 import com.example.Dailydone.Mapper.UserProfileMapper;
-import com.example.Dailydone.Repository.TempOTPRepo;
-import com.example.Dailydone.Repository.UserProfileRepo;
+import com.example.Dailydone.Repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.Period;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +26,12 @@ public class UserprofileService {
     private TempOTPRepo tempOTPRepo;
     @Autowired
     private SmsAPI smsAPI;
+    @Autowired
+    private RatingRepo ratingRepo;
+    @Autowired
+    private RatingUserRepo ratingUserRepo;
+    @Autowired
+    private EarningRecordRepository earningRecordRepository;
     public static int calculateAge(LocalDate birthDate) {
         return Period.between(birthDate, LocalDate.now()).getYears();
     }
@@ -59,22 +63,57 @@ public class UserprofileService {
     public UserProfileDTO UpdateProfile(Long id,UserProfileDTO userProfileDTO){
         UserProfile userProfile = userProfileRepo.findByUser_Id(id)
                 .orElseThrow(()->new RuntimeException("User not found"));
-    userProfile.setName(userProfileDTO.getName());
+        userProfile.setName(userProfileDTO.getName());
         userProfile.setPhone(userProfileDTO.getPhone());
         userProfile = userProfileRepo.save(userProfile);
         return userProfileMapper.toDTO(userProfile);
     }
 
-    public UserProfileDTO GetProfile(Long id){
-        UserProfileDTO userProfileDTO = userProfileMapper.toDTO(userProfileRepo.findByUser_Id(id)
-                .orElseThrow(()->new RuntimeException("User id not found")));
-        System.out.println(userProfileDTO.getTaskPosted());
-        if(userProfileDTO.getTaskPosted() < 0){
+    public UserProfileDTO GetProfile(Long id) {
+        UserProfile userProfile = userProfileRepo.findByUser_Id(id)
+                .orElseThrow(() -> new RuntimeException("User id not found"));
+
+        UserProfileDTO userProfileDTO = userProfileMapper.toDTO(userProfile);
+
+        // --- Average for main rating ---
+        List<Rating> ratings = ratingRepo.findByUserProfile(userProfile);
+        double avg = 0;
+        if (!ratings.isEmpty()) {
+            double sum = 0;
+            for (Rating rating : ratings) {
+                sum += rating.getRating();
+            }
+            avg = sum / ratings.size();
+        }
+
+        // --- Average for user behaviour rating ---
+        List<RatingForUser> ratingForUser = ratingUserRepo.findByUserProfile1(userProfile);
+        double avg1 = 0;
+        if (!ratingForUser.isEmpty()) {
+            double sum1 = 0;
+            for (RatingForUser r : ratingForUser) {
+                sum1 += r.getRating();
+            }
+            avg1 = sum1 / ratingForUser.size();
+        }
+        System.out.println("****" + avg);
+        System.out.println("****" + avg1);
+        // --- Save updated values ---
+        userProfile.setRating(avg);
+        userProfile.setUserRating(avg1);
+        userProfileRepo.save(userProfile);
+
+        // --- Set DTO for response ---
+        userProfileDTO.setRating(avg);
+        userProfileDTO.setUserBehaviour(avg1);
+
+        if (userProfileDTO.getTaskPosted() < 0) {
             userProfileDTO.setTaskPosted(0);
         }
-        System.out.println(userProfileDTO.getTaskPosted());
+
         return userProfileDTO;
     }
+
     @Transactional
     public String sendOTP(String phone){
         TempOtp tempOtp = new TempOtp();
@@ -91,6 +130,7 @@ public class UserprofileService {
 
         return "saved";
     }
+
     @Transactional
     public String Verify(TempOtp OTP,String phone){
         TempOtp tempOtp = tempOTPRepo.findByPhone(phone)
@@ -108,5 +148,20 @@ public class UserprofileService {
         tempOTPRepo.deleteById(tempOtp.getId());
 
         return "Successfully completed login";
+    }
+    public EarningStatsDTO getMoneyStats(Long id){
+        UserProfile userProfile = userProfileRepo.findByUser_Id(id)
+                .orElseThrow(()-> new RuntimeException("Id not there"));
+
+        EarningRecord earningRecord = earningRecordRepository.findById(userProfile.getEarningRecord().getId())
+                .orElseThrow(()->new RuntimeException("no record found"));
+
+        EarningStatsDTO earningStatsDTO = new EarningStatsDTO();
+        earningStatsDTO.setDailyEarnings(earningRecordRepository.getDailyEarnings(userProfile.getId()));
+        earningStatsDTO.setWeeklyEarnings(earningRecordRepository.getWeeklyEarnings(userProfile.getId()));
+        earningStatsDTO.setMonthlyEarnings(earningRecordRepository.getMonthlyEarnings(userProfile.getId()));
+        earningStatsDTO.setTotalEarnings(earningRecordRepository
+                .getTotalEarnings(userProfile.getId()));
+        return earningStatsDTO;
     }
 }
