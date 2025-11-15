@@ -24,40 +24,34 @@ public class RatingService {
     private ErrandRepo err;
 
     @Transactional
-    public String giveRating(Double rating, Long id,Long errId) {
+    public String giveRating(Double rating, Long id) {
         UserProfile userProfile = userProfileRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Errand errand = err.findById(errId)
-                .orElseThrow(()->new RuntimeException("errand not found"));
 
         Rating rating1 = new Rating();
         rating1.setRating(rating);
         rating1.setPoints((int) (rating * 10));
         rating1.setUserProfile(userProfile);
-        errand.setRating(rating1);
+
         System.out.println(rating1.getUserProfile().getId() + " ✅✅");
         ratingRepo.save(rating1);
-        err.save(errand);
         return userProfile.getName();
     }
     @Transactional
-    public String giveRating1(Double rating, Long id,Long errId) {
+    public String giveRating1(Double rating, Long id) {
         UserProfile userProfile = userProfileRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Errand errand = err.findById(errId)
-                .orElseThrow(()->new RuntimeException("errand not found"));
 
         RatingForUser rating1 = new RatingForUser();
         rating1.setRating(rating);
         rating1.setPoints((int) (rating * 10));
         rating1.setUserProfile1(userProfile);
-        errand.setRatingForUser(rating1);
+
         System.out.println(rating1.getUserProfile1().getId() + " ✅✅");
 
         ratingUserRepo.save(rating1);
-        err.save(errand);
+
         return userProfile.getName();
     }
 

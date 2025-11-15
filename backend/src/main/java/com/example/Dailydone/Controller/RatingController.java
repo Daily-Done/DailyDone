@@ -26,30 +26,20 @@ public class RatingController {
     @Autowired
     private ErrandRepo errandRepo;
     @PostMapping("/givereview")
-    public ResponseEntity<?> giveReview(@RequestParam Double rating,@RequestParam Long id
-            ,@RequestParam long errandId){
+    public ResponseEntity<?> giveReview(@RequestParam Double rating,@RequestParam Long id){
         System.out.println("rating is " + rating);
         System.out.println("🧊🧊🧊🧊***************");
-        Errand errand = errandRepo.findById(errandId)
-                .orElseThrow(()->new RuntimeException("errand not found"));
-        if(errand.getRating().getId() != null){
-            throw new RuntimeException("User has already given the Rating");
-        }
-        return ResponseEntity.ok(ratingService.giveRating(rating,id,errandId));
+
+        return ResponseEntity.ok(ratingService.giveRating(rating,id));
     }
 
     @PostMapping("/giveUserReview")
     public ResponseEntity<?> giveUserReview(@RequestParam Double rating,@RequestParam Long id
-                                            ,@RequestParam Long errandId){
+                                            ){
 
-        Errand errand = errandRepo.findById(errandId)
-                        .orElseThrow(()->new RuntimeException("errand not found"));
-        if(errand.getRatingForUser().getId() != null){
-            throw new RuntimeException("Helper has already given the review");
-        }
         System.out.println("rating for user is " + rating);
         System.out.println("🧊🧊🧊🧊");
-        return ResponseEntity.ok(ratingService.giveRating1(rating,id,errandId));
+        return ResponseEntity.ok(ratingService.giveRating1(rating,id));
     }
 
 }

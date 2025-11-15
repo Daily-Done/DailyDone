@@ -26,6 +26,10 @@ public class Task {
     @Column(nullable = true)
     private String status;            // COMPLETED or PENDING or CANCELLED
 
+    @OneToOne
+    @JoinColumn(name = "errand_id")
+    private Errand errand;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserProfile user;         // who created the task

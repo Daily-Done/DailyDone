@@ -44,23 +44,19 @@ public class ErrandService {
     private TaskRepository taskRepository;
     @Transactional
     public void CreateErrand(ErrandDTO errandDTO){
-         Errand errand = errandMapper.toEntity(errandDTO);
+        Errand errand = errandMapper.toEntity(errandDTO);
 
-         UserProfile userProfile = userProfileRepo
-                 .findByUser_Id(errand.getCustomer().getId())
-                         .orElseThrow(() -> new RuntimeException("userprofile not found"));
-         userProfile.setTaskPosted(userProfile.getTaskPosted() + 1);
+        UserProfile userProfile = userProfileRepo
+                .findByUser_Id(errand.getCustomer().getId())
+                .orElseThrow(() -> new RuntimeException("userprofile not found"));
+        userProfile.setTaskPosted(userProfile.getTaskPosted() + 1);
 
-         userProfileRepo.save(userProfile);
-         errand.setStatus("Available");
-        Task task = new Task();
-        task.setUser(userProfile);
-        task = taskRepository.save(task);
-        errand.setTask(task);
+        userProfileRepo.save(userProfile);
+        errand.setStatus("Available");
         errand = errandRepo.save(errand);
-         // webSocketController.broadcastNewErrand(errandDTO1);
+        // webSocketController.broadcastNewErrand(errandDTO1);
 
-         errandMapper.toDTO(errand);
+        errandMapper.toDTO(errand);
     }
 
     public List<ErrandDTO> showAcceptedErrand1(Long userid){
@@ -120,7 +116,6 @@ public class ErrandService {
         return errandDTO;
     }
 
-
     @Transactional
     public ErrandDTO CancelTask(Long id,User user){
         System.out.println("this cancel helper is called ⚗️⚗️⚗️🛢️🛢️🩻🩻💉💉🩺🩺🧬🧬🔬🔬");
@@ -143,40 +138,28 @@ public class ErrandService {
 
     @Transactional
     public String taskCompleted(Long userprofileId,Long helperProfileId,Long errandId){
+
         UserProfile helperProfile = userProfileRepo.findById(helperProfileId)
-                .orElseThrow(()-> new RuntimeException("not found "));
+                .orElseThrow(() -> new RuntimeException("not found"));
 
         UserProfile userProfile = userProfileRepo.findById(userprofileId)
-                .orElseThrow(()->new RuntimeException("not found"));
+                .orElseThrow(() -> new RuntimeException("not found"));
 
         Errand errand = errandRepo.findById(errandId)
-                .orElseThrow(()->new RuntimeException("not found"));
+                .orElseThrow(() -> new RuntimeException("not found"));
 
         errand.setStatus("Completed");
-        helperProfile.setTaskAccepted(helperProfile.getTaskAccepted()+1);
+
+        helperProfile.setTaskAccepted(helperProfile.getTaskAccepted() + 1);
         helperProfile.setEarning(helperProfile.getEarning() + errand.getPrice());
 
-        EarningRecord earningRecord = (EarningRecord) earningRecordRepository.
-                findByUser_Id(helperProfile.getId());
-
+        EarningRecord earningRecord = earningRecordRepository.findByUser_Id(helperProfile.getId());
         earningRecord.setAmount(helperProfile.getEarning());
-
         earningRecord.setEarnedAt(LocalDateTime.now());
 
         earningRecordRepository.save(earningRecord);
-
-        userProfileRepo.save(userProfile);
         userProfileRepo.save(helperProfile);
         errandRepo.save(errand);
-
-        Task task = taskRepository.findById(errand.getTask().getId())
-                .orElseThrow(()->new RuntimeException("task not found"));
-
-        task.setHelper(helperProfile);
-        task.setCreatedAt(errand.getCreatedAt());
-        task.setCategory(errand.getCategory().getName());
-        task.setAmount(errand.getPrice());
-        taskRepository.save(task);
 
         return "Success";
     }

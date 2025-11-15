@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskRepository extends JpaRepository<Task,Long> {
 
@@ -48,4 +49,6 @@ public interface TaskRepository extends JpaRepository<Task,Long> {
             "GROUP BY t.helper.id " +
             "ORDER BY SUM(t.amount) DESC")
     List<Object[]> getTodayHelperEarnings();
+    Optional<Task> findByErrand_Id(Long errandId);
+
 }

@@ -57,8 +57,7 @@ public class Errand {
     @JoinColumn(name = "userProfile_id")
     private UserProfile userProfile;
 
-    @OneToOne
-    @JoinColumn(name = "task_id")
+    @OneToOne(mappedBy = "errand")
     private Task task;
 
     @OneToOne(fetch = FetchType.LAZY)
