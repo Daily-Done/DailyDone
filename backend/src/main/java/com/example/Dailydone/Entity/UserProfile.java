@@ -47,10 +47,10 @@ public class UserProfile {
     @JoinColumn(name = "earningRecord_id")
     private EarningRecord earningRecord;
 
-    @OneToMany(mappedBy = "userProfile")
+    @OneToMany(mappedBy = "userProfile", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Rating> ratings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userProfile1")
+    @OneToMany(mappedBy = "userProfile1", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RatingForUser> ratingUser = new ArrayList<>();
 
     @PrePersist

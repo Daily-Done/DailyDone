@@ -21,6 +21,7 @@ public class PendingUser {
     private String Username;
     private String email;
     private String password;
+    private LocalDateTime createdAt = LocalDateTime.now();
     private String otp;
     private LocalDateTime otpExpiry;
 }

@@ -1,6 +1,7 @@
 package com.example.Dailydone.Service;
 
 import com.example.Dailydone.DTO.UserDTO;
+import com.example.Dailydone.Entity.PendingUser;
 import com.example.Dailydone.Entity.Role;
 import com.example.Dailydone.Entity.User;
 import com.example.Dailydone.Mapper.UserMapper;
@@ -10,12 +11,15 @@ import com.example.Dailydone.Repository.UserRepository;
 import com.example.Dailydone.Security.UserPrinciple;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +32,20 @@ public class UserAuthServices implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private PendingUserRepository pendingUserRepository;
+
+    @Scheduled(fixedRate = 300000)  // every 5 mins → 300000 ms
+    public void deleteOldPendingUsers() {
+
+        LocalDateTime cutoff = LocalDateTime.now().minusMinutes(5);
+
+        List<PendingUser> oldUsers = pendingUserRepository.findOlderThan(cutoff);
+
+        for (PendingUser user : oldUsers) {
+            pendingUserRepository.delete(user);
+            System.out.println("Deleted pending user ID: " + user.getId());
+        }
+    }
+
     public User Register(UserDTO userDTO) {
      Optional<User> user = userRepository.findByUsername(userDTO.getUsername());
      if(user.isPresent()){

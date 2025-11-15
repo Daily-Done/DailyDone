@@ -78,6 +78,7 @@ public class SystemSecurity {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST,"/auth/**")
                         .permitAll()
+                        .requestMatchers("/checkination").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/","/error").permitAll()
                         .requestMatchers("/Categories/**","/api/roles/**")

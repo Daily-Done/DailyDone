@@ -57,6 +57,10 @@ public class UserprofileService {
         userProfile1.setAge(a);
         userProfile1 = userProfileRepo.save(userProfile1);
 
+        EarningRecord earningRecord = new EarningRecord();
+        earningRecord.setUser(userProfile1);
+        earningRecordRepository.save(earningRecord);
+
         return "Success";
     }
 
@@ -151,45 +155,30 @@ public class UserprofileService {
     }
 
     public EarningStatsDTO getMoneyStats(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("User ID cannot be null");
-        }
 
-        // Step 1: Fetch the user profile safely
+        System.out.println("this api *************");
+        System.out.println(" /////////////////// ");
+
         UserProfile userProfile = userProfileRepo.findByUser_Id(id)
-                .orElseThrow(() -> new RuntimeException("User profile not found for ID: " + id));
-
-        // Step 2: Check if an earning record is linked
-        if (userProfile.getEarningRecord() == null) {
-            throw new RuntimeException("No earning record linked with user profile ID: " + userProfile.getId());
-        }
-
-        // Step 3: Fetch earning record from DB
-        EarningRecord earningRecord = earningRecordRepository.findById(userProfile.getEarningRecord().getId())
-                .orElseThrow(() -> new RuntimeException("Earning record not found in DB for profile ID: " + userProfile.getId()));
-
-        // Step 4: Build response safely
-        EarningStatsDTO earningStatsDTO = new EarningStatsDTO();
+                .orElseThrow(()->new RuntimeException("error on finding new errand"));
 
         try {
-            earningStatsDTO.setDailyEarnings(
-                    Optional.ofNullable(earningRecordRepository.getDailyEarnings(userProfile.getId())).orElse(0.0)
-            );
-            earningStatsDTO.setWeeklyEarnings(
-                    Optional.ofNullable(earningRecordRepository.getWeeklyEarnings(userProfile.getId())).orElse(0.0)
-            );
-            earningStatsDTO.setMonthlyEarnings(
-                    Optional.ofNullable(earningRecordRepository.getMonthlyEarnings(userProfile.getId())).orElse(0.0)
-            );
-            earningStatsDTO.setTotalEarnings(
-                    Optional.ofNullable(earningRecordRepository.getTotalEarnings(userProfile.getId())).orElse(0.0)
-            );
-        } catch (Exception e) {
-            // Catch unexpected DB or logic errors
-            System.err.println("Error while fetching earnings for user ID " + id + ": " + e.getMessage());
-            throw new RuntimeException("Failed to calculate earnings stats. Please try again later.");
-        }
+            EarningStatsDTO earningStatsDTO = new EarningStatsDTO();
 
-        return earningStatsDTO;
+            Double daily = Optional.ofNullable(earningRecordRepository.getDailyEarnings(userProfile.getId())).orElse(0.0);
+            Double weekly = Optional.ofNullable(earningRecordRepository.getWeeklyEarnings(userProfile.getId())).orElse(0.0);
+            Double monthly = Optional.ofNullable(earningRecordRepository.getMonthlyEarnings(userProfile.getId())).orElse(0.0);
+            Double total = Optional.ofNullable(earningRecordRepository.getTotalEarnings(userProfile.getId())).orElse(0.0);
+
+            earningStatsDTO.setDailyEarnings(daily);
+            earningStatsDTO.setWeeklyEarnings(weekly);
+            earningStatsDTO.setMonthlyEarnings(monthly);
+            earningStatsDTO.setTotalEarnings(total);
+
+            return earningStatsDTO;
+        } catch (Exception e) {
+            System.err.println("error has occur on this getMoneyStats method");
+            return new EarningStatsDTO(0.0, 0.0, 0.0, 0.0); // fallback default
+        }
     }
 }

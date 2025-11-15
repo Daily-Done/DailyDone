@@ -45,12 +45,15 @@ public class AuthRequest {
             System.out.println("email already exist");
             return ResponseEntity.ok("Email already exist");
         }
+
         Optional<PendingUser> pendingUser = pendingUserRepository
                 .findByEmail(userDTO.getEmail());
+
         if(pendingUser.isPresent()){
             System.out.println("email already pending");
-            return ResponseEntity.ok("email already pending");
+            throw new RuntimeException("Email already Pending");
         }
+
         System.out.println("email is perfect");
         String otp = OtpGeneRater.Generate();
         PendingUser pending = new PendingUser();

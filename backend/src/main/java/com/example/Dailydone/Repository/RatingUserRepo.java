@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface RatingUserRepo extends JpaRepository<RatingForUser,Long> {
     List<RatingForUser> findByUserProfile1(UserProfile userProfile);
-
+    RatingForUser findByErrand_Id(Long id);
 }

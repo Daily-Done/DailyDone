@@ -57,6 +57,18 @@ public class Errand {
     @JoinColumn(name = "userProfile_id")
     private UserProfile userProfile;
 
+    @OneToOne
+    @JoinColumn(name = "task_id")
+    private Task task;
+
+    @OneToOne
+    @JoinColumn(name = "rating_id")
+    private Rating rating;
+
+    @OneToOne
+    @JoinColumn(name = "UserRating")
+    private RatingForUser ratingForUser;
+
     @ManyToOne(optional = true)
     @JoinColumn(name = "helperProfile_id")
     private UserProfile helperProfile;

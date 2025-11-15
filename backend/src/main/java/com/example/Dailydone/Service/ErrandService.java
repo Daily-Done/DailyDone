@@ -3,21 +3,16 @@ package com.example.Dailydone.Service;
 import com.example.Dailydone.Controller.ErrandWebSocketController;
 import com.example.Dailydone.DTO.ErrandDTO;
 import com.example.Dailydone.DTO.UserProfileDTO;
-import com.example.Dailydone.Entity.Errand;
-import com.example.Dailydone.Entity.Rating;
-import com.example.Dailydone.Entity.User;
-import com.example.Dailydone.Entity.UserProfile;
+import com.example.Dailydone.Entity.*;
 import com.example.Dailydone.Mapper.ErrandMapper;
 import com.example.Dailydone.Mapper.UserProfileMapper;
-import com.example.Dailydone.Repository.ErrandRepo;
-import com.example.Dailydone.Repository.RatingRepo;
-import com.example.Dailydone.Repository.UserProfileRepo;
-import com.example.Dailydone.Repository.UserRepository;
+import com.example.Dailydone.Repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +38,10 @@ public class ErrandService {
     private UserProfileMapper userProfileMapper;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EarningRecordRepository earningRecordRepository;
+    @Autowired
+    private TaskRepository taskRepository;
     @Transactional
     public void CreateErrand(ErrandDTO errandDTO){
          Errand errand = errandMapper.toEntity(errandDTO);
@@ -54,8 +53,13 @@ public class ErrandService {
 
          userProfileRepo.save(userProfile);
          errand.setStatus("Available");
-         errand = errandRepo.save(errand);
+        Task task = new Task();
+        task.setUser(userProfile);
+        task = taskRepository.save(task);
+        errand.setTask(task);
+        errand = errandRepo.save(errand);
          // webSocketController.broadcastNewErrand(errandDTO1);
+
          errandMapper.toDTO(errand);
     }
 
@@ -152,9 +156,27 @@ public class ErrandService {
         helperProfile.setTaskAccepted(helperProfile.getTaskAccepted()+1);
         helperProfile.setEarning(helperProfile.getEarning() + errand.getPrice());
 
+        EarningRecord earningRecord = (EarningRecord) earningRecordRepository.
+                findByUser_Id(helperProfile.getId());
+
+        earningRecord.setAmount(helperProfile.getEarning());
+
+        earningRecord.setEarnedAt(LocalDateTime.now());
+
+        earningRecordRepository.save(earningRecord);
+
         userProfileRepo.save(userProfile);
         userProfileRepo.save(helperProfile);
         errandRepo.save(errand);
+
+        Task task = taskRepository.findById(errand.getTask().getId())
+                .orElseThrow(()->new RuntimeException("task not found"));
+
+        task.setHelper(helperProfile);
+        task.setCreatedAt(errand.getCreatedAt());
+        task.setCategory(errand.getCategory().getName());
+        task.setAmount(errand.getPrice());
+        taskRepository.save(task);
 
         return "Success";
     }
@@ -178,13 +200,13 @@ public class ErrandService {
 
     }
 
+
     public List<ErrandDTO> helperTask(User user){
         System.out.println(user.getId());
         List<Errand> errand = errandRepo.findByRunner_IdAndStatusNot(user.getId(), "Available")
                 .orElseThrow(()-> new RuntimeException("not found"));
 
         return (errand.stream().map(errandMapper::toDTO).toList());
-
     }
 
     public List<ErrandDTO> GetByCategories(int page ,int size,Long CustomerId,Long CatId){
@@ -232,6 +254,24 @@ public class ErrandService {
         } else {
             System.out.println("ℹ️ No errands found to expire at this time.");
         }
+    }
+
+    public Page<ErrandDTO> searchTasks(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return errandRepo.findAll(pageable)
+                    .map(errandMapper::toDTO);
+        }
+
+        return errandRepo.searchByPrefix(keyword.trim().toLowerCase(), pageable)
+                .map(errandMapper::toDTO);
+    }
+
+    public Page<ErrandDTO> getErrandsByPriceRange(Double minPrice, Double maxPrice, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<Errand> errands = errandRepo.findByPriceRange(minPrice, maxPrice, pageable);
+        return errands.map(errandMapper::toDTO);
     }
 
     public UserProfileDTO getHelperProfile(Long id){
