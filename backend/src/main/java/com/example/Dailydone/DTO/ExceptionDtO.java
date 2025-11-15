@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExceptionDtO {
-    //private String apiPath;
-    //private HttpStatus statusCode;
+
     private String errorMessage;
-    //private LocalDateTime errorTime;
+
 }

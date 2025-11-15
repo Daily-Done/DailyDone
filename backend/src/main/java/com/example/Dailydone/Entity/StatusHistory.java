@@ -19,9 +19,6 @@ public class StatusHistory {
     private String status;
     private LocalDateTime changedAt;
 
-    //@ManyToOne
-    //@JoinColumn(name = "errand_id")
-    //private Errand errand;
 
 
     @PrePersist

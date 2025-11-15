@@ -13,9 +13,7 @@ public class StatusMapper {
         dto.setStatus(statusHistory.getStatus());
         dto.setChangedAt(statusHistory.getChangedAt());
 
-        //if (statusHistory.getErrand() != null) {
-       //     dto.setErrandId(statusHistory.getErrand().getId());
-        //}
+
 
         return dto;
     }

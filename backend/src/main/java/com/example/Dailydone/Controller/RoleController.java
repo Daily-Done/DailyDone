@@ -18,7 +18,6 @@ public class RoleController {
 
     private final RoleService roleService;
 
-    // POST /api/roles/add-all
     @PostMapping("/add-all")
     public ResponseEntity<String> addRoles(@RequestBody List<Role> roles) {
         roleService.saveAllRoles(roles);

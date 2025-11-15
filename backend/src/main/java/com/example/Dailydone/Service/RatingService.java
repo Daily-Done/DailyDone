@@ -33,7 +33,7 @@ public class RatingService {
 
         Rating rating1 = new Rating();
         rating1.setRating(rating);
-        rating1.setPoints((int) (rating * 10)); // safe, rating is set
+        rating1.setPoints((int) (rating * 10));
         rating1.setUserProfile(userProfile);
         errand.setRating(rating1);
         System.out.println(rating1.getUserProfile().getId() + " ✅✅");
@@ -50,8 +50,8 @@ public class RatingService {
                 .orElseThrow(()->new RuntimeException("errand not found"));
 
         RatingForUser rating1 = new RatingForUser();
-        rating1.setRating(rating);              // ✅ set rating before using it
-        rating1.setPoints((int) (rating * 10)); // ✅ safe math
+        rating1.setRating(rating);
+        rating1.setPoints((int) (rating * 10));
         rating1.setUserProfile1(userProfile);
         errand.setRatingForUser(rating1);
         System.out.println(rating1.getUserProfile1().getId() + " ✅✅");

@@ -1,5 +1,6 @@
 package com.example.Dailydone.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -22,7 +23,6 @@ import java.util.Optional;
 public class Errand {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long id;
 
     private String description;
@@ -43,7 +43,7 @@ public class Errand {
     @JoinColumn(name = "runner_id")
     private User runner;
 
-    private String Urgency;
+    private String urgency;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -61,22 +61,22 @@ public class Errand {
     @JoinColumn(name = "task_id")
     private Task task;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rating_id")
+    @JsonIgnore
     private Rating rating;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "UserRating")
+    @JsonIgnore
     private RatingForUser ratingForUser;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "helperProfile_id")
     private UserProfile helperProfile;
-    //@OneToMany(mappedBy = "errand", cascade = CascadeType.ALL, orphanRemoval = true)
-    //private List<StatusHistory> statusHistoryList = new ArrayList<>();
 
     @PrePersist
-    public void onCreate(){
+    public void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 }

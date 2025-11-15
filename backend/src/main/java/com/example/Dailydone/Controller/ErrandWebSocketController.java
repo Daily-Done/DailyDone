@@ -18,7 +18,6 @@ public class ErrandWebSocketController {
         this.template = template;
     }
 
-    // Broadcast new errand to all users
     public void broadcastNewErrand(ErrandDTO errand) {
         template.convertAndSend("/topic/errands/new", errand);
     }

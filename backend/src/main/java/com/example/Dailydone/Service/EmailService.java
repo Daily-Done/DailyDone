@@ -35,24 +35,21 @@ public class EmailService {
 
     public void sendExpiryMessage(String toEmail){
         try {
-            // Initialize Brevo API client
+
             ApiClient defaultClient = Configuration.getDefaultApiClient();
             ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key");
             apiKey.setApiKey(apiKeyValue); // <-- from your @Value property
 
             TransactionalEmailsApi apiInstance = new TransactionalEmailsApi();
 
-            // Sender info (your verified domain email)
-
             SendSmtpEmailSender sender = new SendSmtpEmailSender();
             sender.setEmail(senderEmail); // e.g. team@dailydone.in
             sender.setName(senderName);   // e.g. Dailydone
 
-            // Recipient
+
             SendSmtpEmailTo to = new SendSmtpEmailTo();
             to.setEmail(toEmail);
 
-            // Build email
             SendSmtpEmail email = new SendSmtpEmail();
             email.setSender(sender);
             email.setTo(List.of(to));
@@ -60,7 +57,6 @@ public class EmailService {
             email.setTextContent("No helper has accepted Your Task in last " +
                     "24 hours so we are expiring your task");
 
-            // Send via Brevo API
             apiInstance.sendTransacEmail(email);
 
             System.out.println("🐗🐗 Message Send Successfully " + toEmail);
@@ -76,30 +72,25 @@ public class EmailService {
 
 
         try {
-            // Initialize Brevo API client
             ApiClient defaultClient = Configuration.getDefaultApiClient();
             ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key");
             apiKey.setApiKey(apiKeyValue); // <-- from your @Value property
 
             TransactionalEmailsApi apiInstance = new TransactionalEmailsApi();
 
-            // Sender info (your verified domain email)
             SendSmtpEmailSender sender = new SendSmtpEmailSender();
             sender.setEmail(senderEmail); // e.g. team@dailydone.in
             sender.setName(senderName);   // e.g. Dailydone
 
-            // Recipient
             SendSmtpEmailTo to = new SendSmtpEmailTo();
             to.setEmail(toEmail);
 
-            // Build email
             SendSmtpEmail email = new SendSmtpEmail();
             email.setSender(sender);
             email.setTo(List.of(to));
             email.setSubject("Your DailyDone OTP");
             email.setTextContent("Your OTP is: " + otp);
 
-            // Send via Brevo API
             apiInstance.sendTransacEmail(email);
 
             System.out.println("✅ OTP Email sent successfully to " + toEmail);

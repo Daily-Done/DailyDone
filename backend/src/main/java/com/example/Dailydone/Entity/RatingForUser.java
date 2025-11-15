@@ -1,5 +1,6 @@
 package com.example.Dailydone.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,8 +22,9 @@ public class RatingForUser {
     private Integer points;
     private LocalDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "errand_id")
+    @JsonIgnore
     private Errand errand;
 
     @ManyToOne

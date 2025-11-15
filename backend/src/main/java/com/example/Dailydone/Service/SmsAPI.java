@@ -14,7 +14,6 @@ public class SmsAPI {
         try {
             String message = "Your DailyDone OTP is: " + otp;
 
-            // ✅ JSON body required by Fast2SMS
             String requestBody = "{"
                     + "\"sender_id\":\"TXTIND\","
                     + "\"message\":\"" + message + "\","
@@ -23,7 +22,6 @@ public class SmsAPI {
                     + "\"numbers\":\"" + phoneNumber + "\""
                     + "}";
 
-            // ✅ Headers
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.add("authorization", API.trim()); // ensure no spaces or newlines
@@ -32,7 +30,6 @@ public class SmsAPI {
 
             RestTemplate restTemplate = new RestTemplate();
 
-            // ✅ Use postForEntity (simpler & safer than exchange)
             ResponseEntity<String> response = restTemplate.postForEntity(
                     "https://www.fast2sms.com/dev/bulkV2",
                     entity,

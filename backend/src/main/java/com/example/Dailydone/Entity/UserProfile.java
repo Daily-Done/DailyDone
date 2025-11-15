@@ -19,7 +19,7 @@ public class UserProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "name")
-    private String name;             // Display name
+    private String name;
     private String phone;
     private Double rating;
     private Double UserRating;

@@ -136,7 +136,7 @@ public class ErrandService {
 
         ErrandDTO errandDTO = errandMapper.toDTO(errand);
 
-        webSocketController.broadcastNewErrand(errandDTO);
+        //webSocketController.broadcastNewErrand(errandDTO);
 
         return errandDTO;
     }

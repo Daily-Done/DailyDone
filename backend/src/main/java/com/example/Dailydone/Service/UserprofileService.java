@@ -79,7 +79,6 @@ public class UserprofileService {
 
         UserProfileDTO userProfileDTO = userProfileMapper.toDTO(userProfile);
 
-        // --- Average for main rating ---
         List<Rating> ratings = ratingRepo.findByUserProfile(userProfile);
         double avg = 0;
         if (!ratings.isEmpty()) {
@@ -90,7 +89,7 @@ public class UserprofileService {
             avg = sum / ratings.size();
         }
 
-        // --- Average for user behaviour rating ---
+
         List<RatingForUser> ratingForUser = ratingUserRepo.findByUserProfile1(userProfile);
         double avg1 = 0;
         if (!ratingForUser.isEmpty()) {
@@ -102,12 +101,11 @@ public class UserprofileService {
         }
         System.out.println("****" + avg);
         System.out.println("****" + avg1);
-        // --- Save updated values ---
+
         userProfile.setRating(avg);
         userProfile.setUserRating(avg1);
         userProfileRepo.save(userProfile);
 
-        // --- Set DTO for response ---
         userProfileDTO.setRating(avg);
         userProfileDTO.setUserBehaviour(avg1);
 

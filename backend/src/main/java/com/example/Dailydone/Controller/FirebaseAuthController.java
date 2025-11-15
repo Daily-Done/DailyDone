@@ -33,7 +33,6 @@ public class FirebaseAuthController {
         }
     }
 
-    // helper class to map request body
     @Setter
     @Getter
     public static class TokenRequest {

@@ -23,7 +23,6 @@ public class PaymentMapper {
         return dto;
     }
 
-    // Convert DTO → Entity
     public static Payment toEntity(PaymentDTO dto, Errand errand) {
         if (dto == null) return null;
 
