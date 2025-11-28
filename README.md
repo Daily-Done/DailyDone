@@ -77,7 +77,6 @@ This architecture ensures high readability, easy maintenance, and long-term scal
 
 ## 🏁 Getting Started (Setup Instructions)
 
-```bash
 # 1. Clone the repository
 git clone https://github.com/your-username/your-repo.git
 cd your-repo
@@ -92,7 +91,6 @@ mvn clean install
 
 # 4. Run application
 mvn spring-boot:run
-
 
 ### 📡 Core API Endpoints
 
