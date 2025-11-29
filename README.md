@@ -21,7 +21,7 @@ It enables real-time task matching, secure user interactions, and a streamlined 
 - **Spring Boot** (REST APIs, application configuration)
 - **Spring Security** (authentication & authorization)
 - **Spring Data JPA** (database access layer)
-- **MySQL / PostgreSQL** (your database)
+- **PostgreSQL** (your database)
 - **Hibernate** (ORM for entity mapping)
 - **Maven** (build & dependency management)
 - **Lombok** (boilerplate code reduction)
