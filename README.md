@@ -3,7 +3,7 @@
 **DailyDone** is a community-driven micro-task platform where users can post tasks they need completed, and other active community members can instantly accept and complete those tasks to earn payments.  
 It enables real-time task matching, secure user interactions, and a streamlined workflow for posting, accepting, completing, and paying for tasks — making it a fast and reliable peer-to-peer task execution system.
 
-## 🚀 Features
+## ✨ Features
 
 - **Task Creation:** Users can post tasks with details such as title, description, category, location, and payout amount.
 - **Real-Time Task Acceptance:** Active community members can instantly view and accept available tasks.
@@ -66,7 +66,7 @@ Provides global exception handling and clean error responses to API clients.
 
 This architecture ensures high readability, easy maintenance, and long-term scalability.
 
-## 🔄 Workflow Overview
+## 🖧 Workflow Overview
 
 1. A user creates a task with required details.
 2. Other active users browse available tasks.
