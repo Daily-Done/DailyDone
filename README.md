@@ -77,19 +77,19 @@ This architecture ensures high readability, easy maintenance, and long-term scal
 
 ## 🏁 Getting Started (Setup Instructions)
 
-# 1. Clone the repository
+## 1. Clone the repository
 git clone https://github.com/your-username/your-repo.git
 cd your-repo
 
-# 2. Configure MySQL
+## 2. Configure MySQL
 spring.datasource.url=jdbc:mysql://localhost:3306/dailydone
 spring.datasource.username=root
 spring.datasource.password=1234
 
-# 3. Install dependencies
+## 3. Install dependencies
 mvn clean install
 
-# 4. Run application
+## 4. Run application
 mvn spring-boot:run
 
 ### 📡 Core API Endpoints
