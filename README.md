@@ -126,6 +126,7 @@ mvn spring-boot:run
 
 ## 📁 Folder Structure
 
+```
 src/  
  └── main/  
       ├── java/com/dailydone/  
@@ -139,6 +140,6 @@ src/
       └── resources/  
              ├── application.properties  
              └── static/  
-
+```
 
   
