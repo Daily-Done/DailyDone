@@ -17,7 +17,7 @@ It enables real-time task matching, secure user interactions, and a streamlined 
 
 ## 🛠 Tech Stack
 
-- **Java** (version 17 or your version)
+- **Java** 
 - **Spring Boot** (REST APIs, application configuration)
 - **Spring Security** (authentication & authorization)
 - **Spring Data JPA** (database access layer)
