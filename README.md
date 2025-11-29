@@ -127,19 +127,23 @@ mvn spring-boot:run
 ## 📁 Folder Structure
 
 ```
-src/  
- └── main/  
-      ├── java/com/dailydone/  
-      │      ├── controller/        # Handles API requests  
-      │      ├── service/           # Business logic  
-      │      ├── repository/        # JPA repositories  
-      │      ├── entity/            # Database models  
-      │      ├── security/          # Auth & authorization  
-      │      └── exception/         # Global exception handling  
-      │
-      └── resources/  
-             ├── application.properties  
-             └── static/  
+src/
+└── main/
+    ├── java/com/example/Dailydone/
+    │   ├── Configuration/         # App-level configuration (CORS, beans, etc.)
+    │   ├── Controller/            # Handles API requests (tasks, auth, ratings, profiles)
+    │   ├── DTO/                   # Request & response DTOs
+    │   ├── Entity/                # Database models (User, Task, Rating, MoneyRecord)
+    │   ├── ExceptionHandling/     # Global exception handlers & custom exceptions
+    │   ├── External/              # External integrations (email, notifications, etc.)
+    │   ├── Mapper/                # Entity ↔ DTO mappers
+    │   ├── Repository/            # Spring Data JPA repositories
+    │   ├── Security/              # Authentication, authorization, JWT filters
+    │   └── Service/               # Business logic (tasks, auth, rating, money)
+    │
+    └── resources/
+        ├── application.properties
+        └── static/                # Static files if needed
 ```
 
   
