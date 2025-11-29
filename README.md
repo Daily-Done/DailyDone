@@ -100,7 +100,7 @@ mvn spring-boot:run
 
 ---
 
-### 📝 Tasks
+### 📋 Tasks
 - **POST** `/tasks` — Create a new task  
 - **GET** `/tasks` — Get all available tasks  
 - **PUT** `/tasks/{id}/accept` — Accept a task  
@@ -108,7 +108,7 @@ mvn spring-boot:run
 - **DELETE** `/tasks/{id}/Cancel` — Verify the completion of a task  
 
 ### 👤 Profile APIs
-- **GET** `/users/{id}` — Get user profile  
+- **POST** `/users/create` — Create user profile  
 - **GET** `/users/{id}/tasks/created` — Get tasks created by the user  
 - **GET** `/users/{id}/tasks/completed` — Get tasks completed by the user  
 - **GET** `/users/{id}/rating` — Get user’s average rating  
@@ -121,7 +121,7 @@ mvn spring-boot:run
 
 ---
 
-### 💰 Money Record API
+###  Money Record API
 - **GET** `/money/{userId}` — Get the complete money record of a particular user
 
 ## 📁 Folder Structure
