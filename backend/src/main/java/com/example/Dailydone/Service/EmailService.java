@@ -74,13 +74,13 @@ public class EmailService {
         try {
             ApiClient defaultClient = Configuration.getDefaultApiClient();
             ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key");
-            apiKey.setApiKey(apiKeyValue); // <-- from your @Value property
+            apiKey.setApiKey(apiKeyValue);
 
             TransactionalEmailsApi apiInstance = new TransactionalEmailsApi();
 
             SendSmtpEmailSender sender = new SendSmtpEmailSender();
-            sender.setEmail(senderEmail); // e.g. team@dailydone.in
-            sender.setName(senderName);   // e.g. Dailydone
+            sender.setEmail(senderEmail);
+            sender.setName(senderName);
 
             SendSmtpEmailTo to = new SendSmtpEmailTo();
             to.setEmail(toEmail);
