@@ -74,7 +74,7 @@ public class EmailService {
         try {
             ApiClient defaultClient = Configuration.getDefaultApiClient();
             ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key");
-            apiKey.setApiKey(apiKeyValue);
+            apiKey.setApiKey(apiKeyValue); // <-- from your @Value property
 
             TransactionalEmailsApi apiInstance = new TransactionalEmailsApi();
 
