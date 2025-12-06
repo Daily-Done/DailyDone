@@ -7,11 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/checkination")
+@RequestMapping("/checking")
 public class Checker {
 
     private static final Logger log = LoggerFactory.getLogger(Checker.class);
-
 
     @GetMapping
     public String ShowText() {
