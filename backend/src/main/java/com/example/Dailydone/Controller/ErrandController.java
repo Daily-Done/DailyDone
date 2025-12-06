@@ -61,24 +61,29 @@ public class ErrandController {
     }
 
     @PostMapping("/Accept")
-    public ResponseEntity<?> AcceptTask(@RequestParam Long id){
-        System.out.println("🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉🍉 Accept task has been called");
+    public ResponseEntity<?> AcceptTask(@RequestParam Long id) {
+        log.info("Accept task endpoint called");
+
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
 
         User user = userPrinciple.GetUser();
+
         return ResponseEntity.status(HttpStatus.ACCEPTED)
-                .body(errandService.AcceptingTask(id,user));
+                .body(errandService.AcceptingTask(id, user));
     }
 
     @PostMapping("/Cancel")
-    public ResponseEntity<?> CancelTask(@RequestParam Long errandId){
-        System.out.println("🩻🩻🩻🩻🔬🔬🔬🔬");
+    public ResponseEntity<?> CancelTask(@RequestParam Long errandId) {
+        log.info("Cancel task endpoint called");
+
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
+
         User user = userPrinciple.GetUser();
+
         return ResponseEntity.status(HttpStatus.ACCEPTED)
-                .body(errandService.CancelTask(errandId,user));
+                .body(errandService.CancelTask(errandId, user));
     }
 
     @DeleteMapping("/CancelUserErrand")
@@ -92,7 +97,7 @@ public class ErrandController {
 
     @PostMapping("/TaskCompleted")
     public ResponseEntity<?> CompleteTAsk(@RequestParam Long userProfileId,
-                                          @RequestParam Long errandId){
+                                          @RequestParam Long errandId) {
 
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
@@ -100,23 +105,25 @@ public class ErrandController {
         Long id = userPrinciple.GetUser().getId();
 
         UserProfile userProfile = userProfileRepo.findByUser_Id(id)
-                        .orElseThrow(()->new RuntimeException("not found"));
+                .orElseThrow(() -> new RuntimeException("not found"));
 
-        System.out.println("this method has been called 🍴🍴🍴🧊🧊🧊");
+        log.info("TaskCompleted endpoint called");
+
         return ResponseEntity.status(HttpStatus.ACCEPTED)
-                .body(errandService.taskCompleted(userProfileId,userProfile.getId(),errandId));
+                .body(errandService.taskCompleted(userProfileId, userProfile.getId(), errandId));
     }
 
     @GetMapping("/HelperTask")
-    public ResponseEntity<?> HelperTask(){
-        System.out.println("🦧🦧🦧🦧 this method is called");
+    public ResponseEntity<?> HelperTask() {
+
+        log.info("HelperTask endpoint called");
+
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
 
         User user = userPrinciple.GetUser();
 
         return ResponseEntity.ok(errandService.helperTask(user));
-
     }
 
     @GetMapping("/showAllUsersErrands")
@@ -136,19 +143,19 @@ public class ErrandController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        System.out.println("🫡 showErrands endpoint has been called");
-        System.out.println("🐸🐸🐸");
+        log.info("showErrands endpoint called");
+
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
 
         Long userId = userPrinciple.GetUser().getId();
 
         if (catId != null) {
-            System.out.println("📂 Category filter applied -> catId: " + catId);
+            log.info("Category filter applied -> catId: {}", catId);
             return ResponseEntity.ok(errandService.GetByCategories(page, size, userId, catId));
         }
 
-        System.out.println("📋 No category filter -> showing all errands");
+        log.info("No category filter -> showing all errands");
         return ResponseEntity.ok(errandService.showALlErrands(userId, page, size));
     }
 

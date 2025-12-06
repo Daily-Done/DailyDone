@@ -40,7 +40,6 @@ public class AuthRequest {
 
     @PostMapping("/signup")
     public ResponseEntity<?> RegisterUser(@RequestBody UserDTO userDTO){
-        System.out.println("this signup method is called..");
         if(userAuthServices.verify(userDTO.getEmail()).isPresent()){
             System.out.println("email already exist");
             return ResponseEntity.ok("Email already exist");
@@ -54,7 +53,6 @@ public class AuthRequest {
             throw new RuntimeException("Email already Pending");
         }
 
-        System.out.println("email is perfect");
         String otp = OtpGeneRater.Generate();
         PendingUser pending = new PendingUser();
         pending.setUsername(userDTO.getUsername());
@@ -62,7 +60,6 @@ public class AuthRequest {
         pending.setPassword(userDTO.getPassword());
         pending.setOtp(otp);
         pending.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
-        System.out.println("saved in pending user");// 5 min expiry
             try {
                 pendingUserRepository.save(pending);
                 System.out.println("printed successfully no errors");

@@ -25,8 +25,6 @@ public class UserprofileService {
     @Autowired
     private TempOTPRepo tempOTPRepo;
     @Autowired
-    private SmsAPI smsAPI;
-    @Autowired
     private RatingRepo ratingRepo;
     @Autowired
     private RatingUserRepo ratingUserRepo;
@@ -117,23 +115,6 @@ public class UserprofileService {
     }
 
     @Transactional
-    public String sendOTP(String phone){
-        TempOtp tempOtp = new TempOtp();
-        String OTP = OtpGeneRater.generateOtp4();
-        tempOtp.setOTP(OTP);
-
-        System.out.println("this method has been called");
-
-        tempOtp.setExpiry(LocalDateTime.now().plusMinutes(3));
-        tempOtp.setPhone(phone);
-        tempOtp = tempOTPRepo.save(tempOtp);
-
-        smsAPI.sendOtpSms(tempOtp.getPhone(), tempOtp.getOTP());
-
-        return "saved";
-    }
-
-    @Transactional
     public String Verify(TempOtp OTP,String phone){
         TempOtp tempOtp = tempOTPRepo.findByPhone(phone)
                 .orElseThrow(()->new RuntimeException("not found"));
@@ -145,8 +126,6 @@ public class UserprofileService {
             throw new RuntimeException("otp is wrong");
         }
 
-        System.out.println("this otp is verified called");
-
         tempOTPRepo.deleteById(tempOtp.getId());
 
         return "Successfully completed login";
@@ -154,9 +133,7 @@ public class UserprofileService {
 
     public EarningStatsDTO getMoneyStats(Long id) {
 
-        System.out.println("this api *************");
-        System.out.println(" /////////////////// ");
-
+        System.out.println("**********");
         UserProfile userProfile = userProfileRepo.findByUser_Id(id)
                 .orElseThrow(()->new RuntimeException("error on finding new errand"));
 

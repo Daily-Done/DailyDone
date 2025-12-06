@@ -15,7 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,9 @@ public class ErrandService {
     private EarningRecordRepository earningRecordRepository;
     @Autowired
     private TaskRepository taskRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(ErrandService.class);
+
     @Transactional
     public void CreateErrand(ErrandDTO errandDTO){
         Errand errand = errandMapper.toEntity(errandDTO);
@@ -90,7 +94,7 @@ public class ErrandService {
 
     @Transactional
     public ErrandDTO AcceptingTask(Long id, User user) {
-        System.out.println("🚝 accepting task has been called");
+        logger.info("🚝 accepting task has been called");
 
         UserProfile helperProfile = userProfileRepo.findByUser_Id(user.getId())
                 .orElseThrow(() -> new RuntimeException("Helper profile not found"));
@@ -102,42 +106,41 @@ public class ErrandService {
         errand.setRunner(user);
         errand.setHelperProfile(helperProfile);
 
-        System.out.println("✨ helper id: " + user.getId());
+        logger.info("✨ helper id: {}", user.getId());
 
         errandRepo.saveAndFlush(errand);
-        System.out.println("🩻🩻🩻🩻🩻🩻🩻🩻");
         errand = errandRepo.findById(errand.getId())
                 .orElseThrow(() -> new RuntimeException("Failed to reload updated errand"));
-        System.out.println("🧊🧊🧊🧊🧊🧊🧊🧊🧊🧊🧊🧊");
+        System.out.println("🧊");
         ErrandDTO errandDTO = errandMapper.toDTO(errand);
-        System.out.println("🧬🧬🧬🧬");
-        System.out.println(errandDTO.getHelperProfileId().toString());
-        System.out.println(" Task accepted successfully for helper: " + helperProfile.getId());
+
+        logger.info(" Task accepted successfully for helper: {}", helperProfile.getId());
         return errandDTO;
     }
 
     @Transactional
-    public ErrandDTO CancelTask(Long id,User user){
-        System.out.println("this cancel helper is called ⚗️⚗️⚗️🛢️🛢️🩻🩻💉💉🩺🩺🧬🧬🔬🔬");
-        System.out.println("🩻🩻💉💉💉😽😽👽👽🧬🧬🧬");
+    public ErrandDTO CancelTask(Long id, User user) {
+        logger.info("CancelTask helper method called for errandId: {}", id);
+
         Errand errand = errandRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Errand not found"));
 
         errand.setStatus("Available");
-
         errand.setRunner(null);
 
         errandRepo.save(errand);
 
-        ErrandDTO errandDTO = errandMapper.toDTO(errand);
+        // webSocketController.broadcastNewErrand(errandDTO);
 
-        //webSocketController.broadcastNewErrand(errandDTO);
-
-        return errandDTO;
+        return errandMapper.toDTO(errand);
     }
 
+
     @Transactional
-    public String taskCompleted(Long userprofileId,Long helperProfileId,Long errandId){
+    public String taskCompleted(Long userprofileId, Long helperProfileId, Long errandId) {
+
+        logger.info("TaskCompleted called | userProfileId: {}, helperProfileId: {}, errandId: {}",
+                userprofileId, helperProfileId, errandId);
 
         UserProfile helperProfile = userProfileRepo.findById(helperProfileId)
                 .orElseThrow(() -> new RuntimeException("not found"));
@@ -160,6 +163,8 @@ public class ErrandService {
         earningRecordRepository.save(earningRecord);
         userProfileRepo.save(helperProfile);
         errandRepo.save(errand);
+
+        logger.info("Task completed successfully for errandId: {}", errandId);
 
         return "Success";
     }
@@ -185,7 +190,6 @@ public class ErrandService {
 
 
     public List<ErrandDTO> helperTask(User user){
-        System.out.println(user.getId());
         List<Errand> errand = errandRepo.findByRunner_IdAndStatusNot(user.getId(), "Available")
                 .orElseThrow(()-> new RuntimeException("not found"));
 

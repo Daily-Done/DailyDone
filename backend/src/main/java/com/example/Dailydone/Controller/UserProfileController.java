@@ -8,6 +8,8 @@ import com.example.Dailydone.Mapper.UserMapper;
 import com.example.Dailydone.Security.UserPrinciple;
 import com.example.Dailydone.Service.ErrandService;
 import com.example.Dailydone.Service.UserprofileService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +27,9 @@ public class UserProfileController {
     private UserprofileService userprofileService;
     @Autowired
     private ErrandService errandService;
+
+    private static final Logger log = LoggerFactory.getLogger(UserProfileController.class);
+
     @PostMapping("/create")
     public ResponseEntity<?> CreateProfile(@RequestParam String name,
                                            @RequestParam String dob,
@@ -53,32 +58,24 @@ public class UserProfileController {
     }
 
     @GetMapping("/getProfile")
-    public ResponseEntity<?> GetProfile(){
+    public ResponseEntity<?> GetProfile() {
+
+        log.info("getProfile endpoint called");
+
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
 
-        System.out.println("Get Profile Has been called");
-
         Long id = userPrinciple.GetUser().getId();
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userprofileService.GetProfile(id));
     }
 
-    @PostMapping("/sendSms")
-    public ResponseEntity<?> SendPhone(@RequestParam String phone) {
-        return ResponseEntity.ok(userprofileService.sendOTP(phone));
-    }
-
-    @CrossOrigin(origins = "http://localhost:5173")
-    @PostMapping("/verifySms")
-    public ResponseEntity<?> SendOtp(@RequestParam String phone,@RequestBody TempOtp otp){
-        return ResponseEntity.ok(userprofileService.Verify(otp,phone));
-    }
 
     @GetMapping("/getHelperProfile")
-    public ResponseEntity<?> GetHelperProfile(@RequestParam Long id){
+    public ResponseEntity<?> GetHelperProfile(@RequestParam Long id) {
 
-        System.out.println("Get Profile Has been called");
+        log.info("getHelperProfile endpoint called for id: {}", id);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(errandService.getHelperProfile(id));
@@ -86,15 +83,18 @@ public class UserProfileController {
 
     @GetMapping("/MoneyStats")
     public ResponseEntity<EarningStatsDTO> getEarnings() {
-        System.out.println("MoneyStats Apis has been called .....");
-        System.out.println("🦺🦺🦺🧿🧿🧿");
+
+        log.info("MoneyStats endpoint called");
+
         UserPrinciple userPrinciple = (UserPrinciple) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
 
         Long userId = userPrinciple.GetUser().getId();
 
         EarningStatsDTO stats = userprofileService.getMoneyStats(userId);
-        System.out.println(stats.toString());
+
+        log.info("MoneyStats response: {}", stats);
+
         return ResponseEntity.ok(stats);
     }
 }
